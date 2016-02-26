@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>QuickHAC Settings</title>
+		<link rel="stylesheet" href="options.css">
+		<script type="text/javascript" src="lib/jquery-2.0.0.min.js"></script>
+		<script type="text/javascript" src="lib/sha512.js"></script>
+		<script type="text/javascript" src="lib/base64.js"></script>
+		<script type="text/javascript" src="hac_dom.js"></script>
+		<script type="text/javascript" src="options_create.js"></script>
+		<script type="text/javascript" src="options_formdata.js"></script>
+		<script type="text/javascript" src="quotes.js"></script>
+		<script type="text/javascript" src="gpa.js"></script>
+		<script type="text/javascript" src="options.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<img src="assets/logo.svg" width="600" />
+			<p id="version" style="font-size:12px;text-align:right;margin-top:-4px;color:#555"></p>
+			<div id="quote"></div>
+			<div id="settings_wrapper">
+				<h2>QuickHAC Settings</h2>
+				<div id="settings"></div>
+				<p id="save_btn_container"><span class="info" id="save_msg">Saved!</span> <button id="save" class="orange_button">Save Options</button></p>
+			</div>
+			<!--<div id="saver">
+				<h2>Save All Data</h2>
+
+				<p>Copy the below text somewhere on your computer. Eventually, a tool will be released that will allow you to view your grades from the entire year.</p>
+
+				<textarea id="localstorage_data" rows="5" cols="96" readonly></textarea>
+			</div>-->
+			<div id="asianness_wrap">
+				<h3>Grade gradient (power) scale</h3>
+				<p style="text-align:justify">Grades in QuickHAC are colored in according to the severity of their score. More or darker color indicates a lower grade. This allows for you to be able to pick out poor grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting power level.</p>
+				<div class="sliderIndicatorWrapper">
+					<div class="sliderIndicator"></div>
+					<p id="asianness_slider_wrapper">1 <input type="range" min="0" max="2.5" step="0.1" id="asianness_slider" /> 12.2</p>
+				</div>
+				<h3>Hue</h3>
+				<p style="text-align:justify">You can also change the colors that your grades show up as. The scale goes from red to yellow to green to blue to violet and all the way back to red, going through every possible hue in the visible color spectrum.</p>
+				<div class="sliderIndicatorWrapper">
+					<div class="sliderIndicator"></div>
+					<p id="hue_slider_wrapper">0 <input type="range" min="0" max="360" step="1" id="hue_slider"> 360</p>
+				</div>
+				<h3>Grade Colors Preview</h3>
+				<div id="color_table"></div>
+			</div>
+			<p style="font-size:12px;text-align:center;margin-top:4px;color:#888">QuickHAC is not a registered trademark of The Westwood HAC-ers.<br>Created by Yash Aggarwal, Max Ciotti, Tristan Seifert, and Xuming Zeng.</p>
+		</div>
+	</body>
+</html>

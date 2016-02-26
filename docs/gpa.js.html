@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: gpa.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: gpa.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @type {number}
+ * @const
+ */
+var DEFAULT_GPA_PRECISION = 3;
+
+/**
+ * Calculates grade point average.
+ * @namespace
+ */
+var GPA = {
+	/**
+	 * Checks if a course is an honors course based on its course name.
+	 * This is needed to calculate the weighted grade point average.
+	 * @param {string} coursename - the course to check
+	 * @returns {boolean} true if the course in an honors course
+	 */
+	is_honors: function(coursename) {
+		return /(ap|ib|tag)/i.test(coursename);
+	},
+
+	/**
+	 * Checks if a given grade should be excluded from the GPA calculation.
+	 * @param {number} grade - the grade to check
+	 * @returns {boolean} true if the grade should be excluded
+	 */
+	_is_empty: function(grade) {
+		if (typeof grade === "undefined") return true;
+		if (grade === "") return true;
+		if (isNaN(grade)) return true;
+		return false;
+	},
+
+	/**
+	 * Finds the average value of an array, excluding empty and NaN grades.
+	 * @param {Array&lt;number>} array - the array of numbers to find the average of
+	 * @returns {number} the average of the array
+	 */
+	_avg: function(array) {
+		total = 0;
+		items = 0;
+		for (var i = 0; i &lt; array.length; i++) {
+			if (GPA._is_empty(array[i]))
+				continue;
+			items++;
+			total += array[i];
+		}
+		return total / items;
+	},
+
+	/**
+	 * Finds the unweighted grade point on a 4.0 scale of a course,
+	 * as defined in the RRISD Course Catalogue
+	 * @param {number} grade - the grade to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	grade_point_unweighted: function(grade) {
+		if (GPA._is_empty(grade)) return NaN;
+		if (grade &lt; 70) return 0;
+		return Math.min(Math.floor((grade - 60) / 10 + 1), 4);
+	},
+
+	/**
+	 * Finds the weighted grade point on a 6.0 scale of a course, as
+	 * defined in the RRISD Course Catalogue
+	 * @param {number} grade - the grade to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	grade_point_weighted: function(grade, title) {
+		if (GPA._is_empty(grade)) return NaN;
+		if (grade &lt; 70) return 0;
+		return (grade - 50) / 10 + (GPA.is_honors(title) ? 1 : 0);
+	},
+
+	/**
+	 * Finds the unweighted GPA on a 4.0 scale of a list of grades, as
+	 * defined in the RRISD Course Catalogue
+	 * @param {Object} grades - the list of gradse to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	unweighted: function(grades) {
+		var courses = [];
+		for (var i = 0; i &lt; grades.length; i++) {
+			courses[courses.length] = GPA.grade_point_unweighted(grades[i].grades[4]);
+			courses[courses.length] = GPA.grade_point_unweighted(grades[i].grades[9]);
+		}
+		// average all GPAs to get final number
+		return GPA._avg(courses);
+	},
+
+	/**
+	 * Finds the weighted GPA on a 6.0 scale of a list of grades, as
+	 * defined in the RRISD Course Catalogue
+	 * @param {Object} grades - the list of gradse to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	weighted: function(grades) {
+		// exactly as above
+		var courses = [];
+		for (var i = 0; i &lt; grades.length; i++) {
+			courses[courses.length] = GPA.grade_point_weighted(grades[i].grades[4], grades[i].title);
+			courses[courses.length] = GPA.grade_point_weighted(grades[i].grades[9], grades[i].title);
+		}
+		return GPA._avg(courses);
+	},
+
+	show: function() {
+		if (!localStorage["gpa_enabled"] || (localStorage["gpa_enabled"] == "true")) {
+			var gpa = !localStorage["gpa_weighted"] || (localStorage["gpa_weighted"] == "true") ?
+				GPA.weighted(JSON.parse(localStorage['grades'])) :
+				GPA.unweighted(JSON.parse(localStorage['grades']));
+			$("#gpa").text(gpa.toFixed(parseInt(localStorage["gpa_precision"]) || DEFAULT_GPA_PRECISION));
+		} else {
+			$("#gpa_wrapper").hide();
+		}
+	}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="GPA.html">GPA</a></li><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_GPA_PRECISION">DEFAULT_GPA_PRECISION</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#gpa_enabled">gpa_enabled</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Sep 11 2013 20:10:18 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
